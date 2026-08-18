@@ -16,8 +16,16 @@ export const achievements = [
 
   { id: 'dsa-10', emoji: '🧮', title: 'Problem Solver', desc: 'Solve 10 DSA problems', check: (s) => s.dsaDone >= 10 },
   { id: 'dsa-50', emoji: '🎯', title: 'Pattern Hunter', desc: 'Solve 50 DSA problems', check: (s) => s.dsaDone >= 50 },
-  { id: 'dsa-blind75', emoji: '🥇', title: 'Blind 75', desc: 'Finish all Blind-75 starred problems', check: (s) => s.blind75Done >= s.blind75Total },
+  { id: 'dsa-100', emoji: '🥇', title: 'Century of Code', desc: 'Solve 100 DSA problems', check: (s) => s.dsaDone >= 100 },
+  { id: 'dsa-250', emoji: '🏅', title: 'Halfway Hero', desc: 'Solve 250 DSA problems', check: (s) => s.dsaDone >= 250 },
+  { id: 'dsa-hard', emoji: '🐉', title: 'Boss Slayer', desc: 'Solve 25 five-star problems', check: (s) => s.dsaDiff?.[5]?.done >= 25 },
   { id: 'dsa-all', emoji: '🧠', title: 'DSA Complete', desc: 'Solve every problem on the sheet', check: (s) => s.dsaDone >= s.dsaTotal },
+
+  { id: 'revision-first', emoji: '🔁', title: 'Second Look', desc: 'Complete your first scheduled revision', check: (s) => s.revisionsCompleted >= 1 },
+  { id: 'revision-25', emoji: '🔂', title: 'Repetition Pays', desc: 'Complete 25 revisions', check: (s) => s.revisionsCompleted >= 25 },
+  { id: 'revision-100', emoji: '🧲', title: 'Memory Muscle', desc: 'Complete 100 revisions', check: (s) => s.revisionsCompleted >= 100 },
+  { id: 'revision-locked-25', emoji: '🧊', title: 'Locked In', desc: 'Take 25 problems through every revision round', check: (s) => s.revisionMasteredCount >= 25 },
+  { id: 'revision-clear', emoji: '🧹', title: 'Queue Zero', desc: 'Empty a revision queue of 10+ problems', check: (s) => s.revisionScheduled >= 10 && s.revisionDueCount === 0 },
 
   { id: 'core-java-done', emoji: '☕', title: 'Java Core Master', desc: 'Finish the Core Java sheet', check: (s) => s.phaseDone['core-java'] },
   { id: 'spring-done', emoji: '🍃', title: 'Spring Master', desc: 'Finish the Spring sheet', check: (s) => s.phaseDone['spring'] },

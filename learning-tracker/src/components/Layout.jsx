@@ -43,6 +43,13 @@ export default function Layout() {
               <span>{l.label}</span>
             </NavLink>
           ))}
+          <NavLink to="/revision" className="nav-link" onClick={close}>
+            <span className="nav-emoji">🔁</span>
+            <span className="nav-link-text">Revision</span>
+            {stats.revisionDueCount > 0 && (
+              <span className="nav-badge" title={`${stats.revisionDueCount} due for revision`}>{stats.revisionDueCount}</span>
+            )}
+          </NavLink>
 
           <div className="nav-group-label">Topic Sheets</div>
           {phases.map((p) => {
@@ -91,6 +98,11 @@ export default function Layout() {
             <div className="tstat hide-sm" title="Items completed">
               <span>✅</span><b>{stats.totalCompleted}</b><span className="tstat-label">done</span>
             </div>
+            {stats.revisionDueCount > 0 && (
+              <NavLink to="/revision" className="tstat tstat-due" title="Problems due for revision">
+                <span>🔁</span><b>{stats.revisionDueCount}</b><span className="tstat-label">to revise</span>
+              </NavLink>
+            )}
           </div>
           {cloudEnabled && user && (
             <NavLink to="/settings" className={`sync-pill ${syncStatus}`} title={`${user.email} — ${SYNC_TEXT[syncStatus] || ''}`}>

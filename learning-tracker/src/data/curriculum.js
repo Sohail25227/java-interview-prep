@@ -1,4 +1,4 @@
-// Topic sheets for every prep area (not DSA — that lives in dsaSheet.js).
+// Topic sheets for every prep area (not DSA — that lives in dsaMasterSheet.js).
 // Each item id MUST be globally unique; it is the key used for progress tracking.
 
 export const POINTS_PER_TOPIC = 10

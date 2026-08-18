@@ -3,13 +3,15 @@ import { useProgress } from '../context/ProgressContext.jsx'
 import { phases, allCurriculumItemIds } from '../data/curriculum.js'
 import { weeks } from '../data/studyPlan.js'
 import ReminderBanner from '../components/ReminderBanner.jsx'
+import RevisionBanner from '../components/RevisionBanner.jsx'
 import ProgressRing from '../components/ProgressRing.jsx'
 import ProgressBar from '../components/ProgressBar.jsx'
 import StatCard from '../components/StatCard.jsx'
 import Heatmap from '../components/Heatmap.jsx'
+import { prettyDate } from '../utils/date.js'
 
 export default function Dashboard() {
-  const { state, stats } = useProgress()
+  const { state, stats, markRevised } = useProgress()
 
   const topicsDone = phases.reduce((acc, p) => acc + stats.phaseProgress[p.id].done, 0)
   const overallDone = topicsDone + stats.dsaDone
@@ -32,12 +34,13 @@ export default function Dashboard() {
       </div>
 
       <ReminderBanner />
+      <RevisionBanner />
 
       <div className="grid-stats">
         <StatCard emoji="🔥" value={stats.currentStreak} label="Current streak" accent="#f97316" sub={`Best: ${stats.longestStreak} days`} />
         <StatCard emoji="⭐" value={stats.points} label="Total points" accent="#eab308" sub={`+${stats.streakBonus} streak bonus`} />
         <StatCard emoji="✅" value={`${overallDone}/${overallTotal}`} label="Items completed" accent="#22c55e" sub={`${overallPct}% overall`} />
-        <StatCard emoji="🧮" value={`${stats.dsaDone}/${stats.dsaTotal}`} label="DSA solved" accent="#a855f7" sub={`Blind75: ${stats.blind75Done}/${stats.blind75Total}`} />
+        <StatCard emoji="🧮" value={`${stats.dsaDone}/${stats.dsaTotal}`} label="DSA solved" accent="#a855f7" sub={stats.dsaRevisitCount ? `🚩 ${stats.dsaRevisitCount} to revisit` : `${stats.dsaStatusCounts.done} done`} />
       </div>
 
       <div className="grid-2">
@@ -74,6 +77,46 @@ export default function Dashboard() {
           <ul className="task-list">
             {nextDay.tasks.map((t, i) => <li key={i}>{t}</li>)}
           </ul>
+        </section>
+      )}
+
+      {stats.revisionScheduled > 0 && (
+        <section className="card rev-card">
+          <div className="section-head">
+            <h2>🔁 Revision queue</h2>
+            <Link to="/revision" className="link">Open revision →</Link>
+          </div>
+          <div className="rev-card-stats">
+            <div className={`rev-stat ${stats.revisionDueCount ? 'hot' : ''}`}>
+              <b>{stats.revisionDueCount}</b><span>due now</span>
+            </div>
+            <div className="rev-stat"><b>{stats.revisionUpcomingCount}</b><span>scheduled</span></div>
+            <div className="rev-stat"><b>{stats.revisionMasteredCount}</b><span>locked in</span></div>
+            <div className="rev-stat"><b>{stats.revisedToday}</b><span>revised today</span></div>
+          </div>
+          {stats.revisionDueCount > 0 ? (
+            <ul className="rev-mini-list">
+              {stats.revisionDue.slice(0, 3).map((r) => (
+                <li key={r.id}>
+                  <span className={`rev-when ${r.overdueDays > 0 ? 'overdue' : ''}`}>
+                    {r.overdueDays > 0 ? `${r.overdueDays}d late` : 'Today'}
+                  </span>
+                  <span className="rev-mini-name">{r.name}</span>
+                  <button className="btn btn-sm" onClick={() => markRevised(r.id)} title="I have revised this — schedule the next round">Mark revised</button>
+                </li>
+              ))}
+              {stats.revisionDueCount > 3 && (
+                <li className="rev-mini-more">
+                  <Link to="/revision" className="link">+ {stats.revisionDueCount - 3} more waiting</Link>
+                </li>
+              )}
+            </ul>
+          ) : (
+            <p className="muted sm">
+              Nothing to revise today.{' '}
+              {stats.revisionUpcoming[0] && `Next up ${stats.revisionUpcoming[0].name} on ${prettyDate(stats.revisionUpcoming[0].dueDate)}.`}
+            </p>
+          )}
         </section>
       )}
 

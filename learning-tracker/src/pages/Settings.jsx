@@ -1,11 +1,13 @@
 import { useRef, useState } from 'react'
 import { useProgress } from '../context/ProgressContext.jsx'
 import AccountCard from '../components/AccountCard.jsx'
+import { revisionIntervals } from '../utils/revision.js'
 
 export default function Settings() {
   const { state, stats, updateSettings, resetAll, exportData, importData } = useProgress()
   const [msg, setMsg] = useState('')
   const fileRef = useRef(null)
+  const intervals = revisionIntervals(state.settings.revisionInterval)
 
   const flash = (m) => { setMsg(m); setTimeout(() => setMsg(''), 2500) }
 
@@ -73,6 +75,24 @@ export default function Settings() {
       </section>
 
       <section className="card">
+        <h2>Revision interval</h2>
+        <p className="muted sm">
+          Days between solving a problem and its first revision. Later rounds come at
+          3× and 6× this gap ({intervals.join(', ')} days).
+        </p>
+        <div className="setting-row">
+          <input
+            type="range" min="1" max="14" value={state.settings.revisionInterval}
+            onChange={(e) => updateSettings({ revisionInterval: Number(e.target.value) })}
+          />
+          <span className="goal-value">{state.settings.revisionInterval} days</span>
+        </div>
+        <p className="muted sm">
+          {stats.revisionDueCount} due now · {stats.revisionUpcomingCount} scheduled · {stats.revisionMasteredCount} locked in
+        </p>
+      </section>
+
+      <section className="card">
         <h2>Plan start date</h2>
         <p className="muted sm">Day 1 of your 12-week plan. Changing this re-dates the calendar.</p>
         <div className="setting-row">
@@ -123,6 +143,7 @@ export default function Settings() {
           <li><span>Longest streak</span><b>{stats.longestStreak} days</b></li>
           <li><span>Items completed</span><b>{stats.totalCompleted}</b></li>
           <li><span>DSA solved</span><b>{stats.dsaDone}/{stats.dsaTotal}</b></li>
+          <li><span>Revisions done</span><b>{stats.revisionsCompleted}</b></li>
           <li><span>Badges</span><b>{stats.earnedAchievements.length}</b></li>
         </ul>
       </section>
